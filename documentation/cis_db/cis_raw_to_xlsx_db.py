@@ -85,7 +85,7 @@ if __name__ == '__main__':
 		else:
 			main(args.f, args.o)
 		workbook = load_workbook(filename=args.o)
-		workbook.remove('Sheet')
+		workbook.remove(workbook['Sheet'])
 		workbook.save(filename=args.o)
 		print('Completed!')
 	else:

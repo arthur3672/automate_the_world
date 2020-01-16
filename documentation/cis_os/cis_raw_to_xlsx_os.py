@@ -114,7 +114,7 @@ if __name__ == '__main__':
 			main(args.f, args.o)
 		
 		workbook = load_workbook(args.o)
-		workbook.remove('Sheet')
+		workbook.remove(workbook['Sheet'])
 		workbook.save(filename=args.o)
 	else:
 		parser.print_usage()

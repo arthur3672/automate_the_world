@@ -105,7 +105,7 @@ if __name__ == '__main__':
 			cis_raw_to_xlsx_os.main(args.f, output_xlsx_file)
 		
 		workbook = load_workbook(output_xlsx_file)
-		workbook.remove('Sheet')
+		workbook.remove(workbook['Sheet'])
 		workbook.save(filename=output_xlsx_file)
 
 		main(output_xlsx_file, args.o)
