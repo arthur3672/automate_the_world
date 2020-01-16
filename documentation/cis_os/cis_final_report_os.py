@@ -77,8 +77,11 @@ def main(input_file, output_file):
 				document.add_paragraph(hosts)
 			document.add_paragraph()
 			document.add_heading('Remediation', level=3)
-			for solution in remediation.split('\n\n'):
-				document.add_paragraph(solution)
+			if '\n\n' in remediation:
+				for solution in remediation.split('\n\n'):
+					document.add_paragraph(solution)
+			else:
+				document.add_paragraph(remediation)
 			document.add_paragraph()
 			document.add_heading('Status', level=3)
 			document.add_paragraph(status)

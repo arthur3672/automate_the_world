@@ -61,8 +61,11 @@ def main(input_file, output_file):
 			status = ws.cell(row=i, column=7).value
 			document.add_heading(name, level=2)
 			document.add_heading('Description', level=3)
-			for desc in description.split('\n\n'):
-				document.add_paragraph(desc)
+			if '\n\n' in description:
+				for desc in description.split('\n\n'):
+					document.add_paragraph(desc)
+			else:
+				document.add_paragraph(description)
 			document.add_paragraph()
 			document.add_heading('Risk Level', level=3)
 			document.add_paragraph(severity)
@@ -71,8 +74,11 @@ def main(input_file, output_file):
 			document.add_paragraph(current_host_value)
 			document.add_paragraph()
 			document.add_heading('Remediation', level=3)
-			for solution in remediation.split('\n\n'):
-				document.add_paragraph(solution)
+			if '\n\n' in remediation:
+				for solution in remediation.split('\n\n'):
+					document.add_paragraph(solution)
+			else:
+				document.add_paragraph(remediation)
 			document.add_paragraph()
 			document.add_heading('Status', level=3)
 			document.add_paragraph(status)

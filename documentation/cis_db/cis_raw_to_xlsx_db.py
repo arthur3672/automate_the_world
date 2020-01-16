@@ -46,22 +46,22 @@ def main(input_file, output_file):
 							name = name.split(' ')[1:]
 							name = ' '.join(name)
 						else:
-							name = ''
+							name = 'Findings name not available'
 
 						if 'compliance-info' in element_name:
 							description = root[i][j].find('{http://www.nessus.org/cm}compliance-info').text
 						else:
-							description = ''
+							description = 'Description not available'
 
 						if 'compliance-actual-value' in element_name:
 							current_value = root[i][j].find('{http://www.nessus.org/cm}compliance-actual-value').text
 						else:
-							current_value = ''
+							current_value = 'No Value for this IP'
 
 						if 'compliance-solution' in element_name:
 							solution = root[i][j].find('{http://www.nessus.org/cm}compliance-solution').text
 						else:
-							solution = ''
+							solution = 'Solution not available'
 
 						status = 'Not Solved'
 						output = [name, description, severity, current_value, solution, status]
