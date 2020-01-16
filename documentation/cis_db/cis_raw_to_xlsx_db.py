@@ -9,7 +9,7 @@ import argparse
 
 def output_to_xlsx(target_ip, output, output_file):
 	workbook = load_workbook(output_file)
-	ws = workbook.get_sheet_by_name(target_ip)
+	ws = workbook[target_ip]
 	current_row_count = ws.max_row
 	output.insert(0, current_row_count)
 	ws.append(output)
@@ -18,7 +18,7 @@ def output_to_xlsx(target_ip, output, output_file):
 def preparation(target_ip, output_file):
 	workbook = load_workbook(output_file)
 	workbook.create_sheet(target_ip)
-	ws = workbook.get_sheet_by_name(target_ip)
+	ws = workbook[target_ip]
 	ws.append(['No', 'Name', 'Description', 'Severity', 'Current Host Value', 'Remediation', 'Status'])
 	bold_font = Font(bold=True)
 	for cell in ws[1:1]:
@@ -85,8 +85,7 @@ if __name__ == '__main__':
 		else:
 			main(args.f, args.o)
 		workbook = load_workbook(filename=args.o)
-		ws = workbook.get_sheet_by_name('Sheet')
-		workbook.remove_sheet(ws)
+		workbook.remove('Sheet')
 		workbook.save(filename=args.o)
 		print('Completed!')
 	else:

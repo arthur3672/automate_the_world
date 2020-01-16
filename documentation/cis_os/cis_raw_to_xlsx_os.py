@@ -9,7 +9,7 @@ import argparse
 
 def output_to_xlsx(target_os, output, output_file):
 	workbook = load_workbook(output_file)
-	ws = workbook.get_sheet_by_name(target_os)
+	ws = workbook[target_os]
 	current_row_count = ws.max_row
 	output.insert(0, current_row_count)
 	ws.append(output)
@@ -18,7 +18,7 @@ def output_to_xlsx(target_os, output, output_file):
 def preparation(target_os, output_file):
 	workbook = load_workbook(output_file)
 	workbook.create_sheet(target_os)
-	ws = workbook.get_sheet_by_name(target_os)
+	ws = workbook[target_os]
 	ws.append(['No', 'Name', 'Description', 'Severity', 'Current Host Value', 'Affected Host', 'Remediation', 'Status'])
 	bold_font = Font(bold=True)
 	for cell in ws[1:1]:
@@ -56,7 +56,7 @@ def main(input_file, output_file):
 						
 						element_name = str(list(root[i][j]))
 						workbook = load_workbook(output_file)
-						ws = workbook.get_sheet_by_name(target_os)
+						ws = workbook[target_os]
 						duplicate = 0
 						for x in range(2, ws.max_row):
 							if ws.cell(row=x, column=2).value == root[i][j].find('{http://www.nessus.org/cm}compliance-check-name').text:
@@ -114,8 +114,7 @@ if __name__ == '__main__':
 			main(args.f, args.o)
 		
 		workbook = load_workbook(args.o)
-		target_sheet_name = workbook.get_sheet_by_name('Sheet')
-		workbook.remove_sheet(target_sheet_name)
+		workbook.remove('Sheet')
 		workbook.save(filename=args.o)
 	else:
 		parser.print_usage()

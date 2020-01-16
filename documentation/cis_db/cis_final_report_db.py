@@ -18,7 +18,7 @@ def main(input_file, output_file):
 	document.add_heading('Findings Summary')
 	document.save(output_file)
 	for x in input_xlsx_file.sheetnames:
-		ws = input_xlsx_file.get_sheet_by_name(x)
+		ws = input_xlsx_file[x]
 		row_count = ws.max_row + 1
 
 		document = Document(output_file)
@@ -48,7 +48,7 @@ def main(input_file, output_file):
 
 	document = Document(output_file)
 	for x in input_xlsx_file.sheetnames:
-		ws = input_xlsx_file.get_sheet_by_name(x)
+		ws = input_xlsx_file[x]
 		row_count = ws.max_row + 1
 		document.add_heading('Finding Details'+' ('+x+')', level=1)
 		document.save(output_file)
@@ -99,8 +99,7 @@ if __name__ == '__main__':
 			cis_raw_to_xlsx_db.main(args.f, output_xlsx_file)
 
 		workbook = load_workbook(filename=output_xlsx_file)
-		ws = workbook.get_sheet_by_name('Sheet')
-		workbook.remove_sheet(ws)
+		workbook.remove['Sheet']
 		workbook.save(filename=output_xlsx_file)
 		main(output_xlsx_file, args.o)
 	else:
