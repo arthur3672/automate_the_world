@@ -58,10 +58,13 @@ def main(input_file, output_file):
 						workbook = load_workbook(output_file)
 						ws = workbook[target_os]
 						duplicate = 0
-						for x in range(2, ws.max_row):
-							if ws.cell(row=x, column=2).value == root[i][j].find('{http://www.nessus.org/cm}compliance-check-name').text:
+						for x in range(2, ws.max_row+1):
+							name = root[i][j].find('{http://www.nessus.org/cm}compliance-check-name').text
+							name = name.split(' ')[1:]
+							name = ' '.join(name)
+							if ws.cell(row=x, column=2).value == name:
 								ws.cell(row=x, column=5).value += '\r\nFor ' + str(target_ip) + ':\r\n' + root[i][j].find('{http://www.nessus.org/cm}compliance-actual-value').text
-								ws.cell(row=x, column=6).value += '\r\n'+target_ip
+								ws.cell(row=x, column=6).value += '\r\n'+str(target_ip)
 								workbook.save(output_file)
 								duplicate = 1
 								break
@@ -72,7 +75,6 @@ def main(input_file, output_file):
 								name = ' '.join(name)
 							else:
 								name = ''
-
 							if 'compliance-info' in element_name:
 								description = root[i][j].find('{http://www.nessus.org/cm}compliance-info').text
 								description = description[1:-1]
