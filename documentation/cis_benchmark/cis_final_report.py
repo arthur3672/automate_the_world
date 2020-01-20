@@ -103,9 +103,9 @@ if __name__ == '__main__':
 			for filename in os.listdir(args.f):
 				if filename.endswith('.nessus'):
 					fullpath_file = args.f + filename
-					cis_raw_to_xlsx_os.main(fullpath_file, output_xlsx_file)
+					cis_raw_to_xlsx.main(fullpath_file, output_xlsx_file)
 		else:
-			cis_raw_to_xlsx_os.main(args.f, output_xlsx_file)
+			cis_raw_to_xlsx.main(args.f, output_xlsx_file)
 		
 		workbook = load_workbook(output_xlsx_file)
 		workbook.remove(workbook['Sheet'])
