@@ -7,7 +7,7 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.shared import Inches
 from openpyxl import Workbook
 from openpyxl import load_workbook
-import cis_raw_to_xlsx_os
+import cis_raw_to_xlsx
 import string
 import argparse
 import os
