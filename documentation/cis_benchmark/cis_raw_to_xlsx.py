@@ -68,8 +68,6 @@ def main(input_file, output_file):
 							duplicate = 0
 							for x in range(2, ws.max_row+1):
 								name = root[i][j].find('{http://www.nessus.org/cm}compliance-check-name').text
-								name = name.split(' ')[1:]
-								name = ' '.join(name)
 								if ws.cell(row=x, column=2).value == name:
 									ws.cell(row=x, column=5).value += '\r\nFor ' + str(target_ip) + ':\r\n' + root[i][j].find('{http://www.nessus.org/cm}compliance-actual-value').text
 									ws.cell(row=x, column=6).value += '\r\n'+str(target_ip)
