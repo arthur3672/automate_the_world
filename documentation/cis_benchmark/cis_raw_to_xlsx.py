@@ -19,7 +19,7 @@ def preparation(target_os, output_file):
 	workbook = load_workbook(output_file)
 	workbook.create_sheet(target_os)
 	ws = workbook[target_os]
-	ws.append(['No', 'Name', 'Description', 'Severity', 'Current Host Value', 'Affected Host', 'Remediation', 'Status'])
+	ws.append(['No', 'Name', 'Description', 'Current Host Value', 'Affected Host', 'Remediation', 'Status'])
 	bold_font = Font(bold=True)
 	for cell in ws[1:1]:
 		cell.font = bold_font
@@ -58,7 +58,7 @@ def main(input_file, output_file):
 						else:
 							break
 
-				for j in range(1, total_findings):	
+				for j in range(1, total_findings):
 					if int(root[i][j].attrib['pluginID']) == plugin_id:
 						severity = root[i][j].find('{http://www.nessus.org/cm}compliance-result').text.capitalize()
 						if severity == 'Failed':
@@ -100,7 +100,7 @@ def main(input_file, output_file):
 									solution = 'Solution not available'
 
 								status = 'Not Solved'
-								output = [name, description, severity, current_value, target_ip, solution, status]
+								output = [name, description, current_value, target_ip, solution, status]
 								output_to_xlsx(target_os, output, output_file)
 	print('Completed!')
 

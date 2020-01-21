@@ -55,18 +55,14 @@ def main(input_file, output_file):
 		for i in range(2, row_count):
 			name = ws.cell(row=i, column=2).value
 			description = ws.cell(row=i, column=3).value
-			severity = ws.cell(row=i, column=4).value
-			current_host_value = ws.cell(row=i, column=5).value
-			affected_host = ws.cell(row=i, column=6).value
-			remediation = ws.cell(row=i, column=7).value
-			status = ws.cell(row=i, column=8).value
+			current_host_value = ws.cell(row=i, column=4).value
+			affected_host = ws.cell(row=i, column=5).value
+			remediation = ws.cell(row=i, column=6).value
+			status = ws.cell(row=i, column=7).value
 			document.add_heading(name, level=2)
 			document.add_heading('Description', level=3)
 			for desc in description.split('\n\n'):
 				document.add_paragraph(desc)
-			document.add_paragraph()
-			document.add_heading('Risk Level', level=3)
-			document.add_paragraph(severity)
 			document.add_paragraph()
 			document.add_heading('Current Host Value', level=3)
 			for value in current_host_value.split('\r\n'):
