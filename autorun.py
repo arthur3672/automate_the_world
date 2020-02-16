@@ -11,6 +11,8 @@ import mysql.connector
 import string
 import os
 import settings
+import shlex
+import subprocess
 
 exit_flag = 0
 error_plugin_list = []
@@ -58,7 +60,7 @@ def process_data(thread_name, working_queue):
 						f.write("Error Plugin ID: " + str(plugin_id) + " is missing from database.")
 						f.close()
 			else:
-				command = result[0][3].decode('utf-8')
+				command = result[0][3].decode('utf-8') + '2>&1'
 				destination_text_file_path = parent_directory + str(plugin_id)+'_' + str(target_host)+'_'+str(target_port) + '.txt'
 
 				if '\r' in command:
@@ -82,8 +84,9 @@ def process_data(thread_name, working_queue):
 				if not (os.path.exists(destination_text_file_path)):
 					# Do not change this part, create a file for better debugging when a thread hangs/wont terminate
 					f = open(destination_text_file_path, "w")
+					command = shlex.split(command)
 					f.write("[Command] " + command + '\n\n')
-					f.write(os.popen(command + " 2>&1").read())
+					f.write(subprocess.check_output(command).read())
 					f.close()
 					message = 'Completed command for Plugin ID: %s; Host: %s; Port: %s; Task Left: %s; Task Completed: %s\n%s' % (plugin_id, target_host, target_port, task_left, task_completed, time_elapsed())
 					print(good_msg(message))
@@ -106,15 +109,15 @@ def error(plugin_id, target_host, target_port, target_protocol):
 	print(error_msg(message))
 
 def good_msg(message):
-	message = '\033[1;32;40m'+message
+	message = '\033[92m'+message+'\033[0m'
 	return message
 
 def warning_msg(message):
-	message = '\033[1;33;40m'+message
+	message = '\033[93m'+message+'\033[0m'
 	return message
 
 def error_msg(message):
-	message = '\033[1;31;40m'+message
+	message = '\033[91m'+message+'\033[0m'
 	return message
 
 def time_elapsed():
