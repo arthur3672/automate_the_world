@@ -7,3 +7,4 @@
 *.xlsx
 *.xml
 __pycache__/
+upload_plugin.py

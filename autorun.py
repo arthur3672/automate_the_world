@@ -1,21 +1,17 @@
 #!/usr/bin/python3
-import requests
 import argparse
 import threading
 import queue
-import time
-import random
-from datetime import datetime
+import datetime
 import xml.etree.ElementTree as ET
 import mysql.connector
-import string
 import os
 import settings
 import shlex
 import subprocess
 
 exit_flag = 0
-error_plugin_list = []
+error_plugin_list = list()
 
 class my_thread (threading.Thread):
 	def __init__(self, thread_name, working_queue):
@@ -60,42 +56,45 @@ def process_data(thread_name, working_queue):
 						f.write("Error Plugin ID: " + str(plugin_id) + " is missing from database.")
 						f.close()
 			else:
-				command = result[0][3].decode('utf-8') + '2>&1'
-				destination_text_file_path = parent_directory + str(plugin_id)+'_' + str(target_host)+'_'+str(target_port) + '.txt'
+				if result[0][1] != 1:
+					command = result[0][3].decode('utf-8') + '2>&1'
+					destination_text_file_path = parent_directory + str(plugin_id)+'_' + str(target_host)+'_'+str(target_port) + '.txt'
 
-				if '\r' in command:
-					command = command.replace('\r', '')
-				if '\n' in command:
-					command = command.replace('\n', '')
-				if 'IP_ADDRESS' in command:
-					command = command.replace('IP_ADDRESS', str(target_host))
-				if 'PORT' in command:
-					command = command.replace('PORT', str(target_port))
-				if 'PLUGIN' in command:
-					command = command.replace('PLUGIN', str(plugin_id))
-				if 'RANDOM_PATH' in command:
-					target_txt_file = '%s_%s_%s_TEMP.txt' % (plugin_id, target_host, target_port)
-					random_path = '"' + parent_directory + target_txt_file + '"'
-					command = command.replace('RANDOM_PATH', random_path)
+					if '\r' in command:
+						command = command.replace('\r', '')
+					if '\n' in command:
+						command = command.replace('\n', '')
+					if 'IP_ADDRESS' in command:
+						command = command.replace('IP_ADDRESS', str(target_host))
+					if 'PORT' in command:
+						command = command.replace('PORT', str(target_port))
+					if 'PLUGIN' in command:
+						command = command.replace('PLUGIN', str(plugin_id))
+					if 'RANDOM_PATH' in command:
+						target_txt_file = '%s_%s_%s_TEMP.txt' % (plugin_id, target_host, target_port)
+						random_path = '"' + parent_directory + target_txt_file + '"'
+						command = command.replace('RANDOM_PATH', random_path)
 
-				task_left = work_queue.qsize()
-				task_completed = total_tasks - task_left
+					task_left = work_queue.qsize()
+					task_completed = total_tasks - task_left
 
-				if not (os.path.exists(destination_text_file_path)):
-					# Do not change this part, create a file for better debugging when a thread hangs/wont terminate
-					f = open(destination_text_file_path, "w")
-					command = shlex.split(command)
-					f.write("[Command] " + command + '\n\n')
-					f.write(subprocess.check_output(command).read())
-					f.close()
-					message = 'Completed command for Plugin ID: %s; Host: %s; Port: %s; Task Left: %s; Task Completed: %s\n%s' % (plugin_id, target_host, target_port, task_left, task_completed, time_elapsed())
-					print(good_msg(message))
-				else:
-					message = 'Skipped executing Plugin ID: %s because the validation check already exists for specific host: %s:%s\n%s' % (plugin_id, target_host, target_port, time_elapsed())
-					print(warning_msg(message))
+					if not (os.path.exists(destination_text_file_path)):
+						# Do not change this part, create a file for better debugging when a thread hangs/wont terminate
+						f = open(destination_text_file_path, "w")
+						command = shlex.split(command)
+						f.write("[Command] " + command + '\n\n')
+						f.write(subprocess.check_output(command).read())
+						f.close()
+						message = 'Completed command for Plugin ID: %s; Host: %s; Port: %s; Task Left: %s; Task Completed: %s\n%s' % (plugin_id, target_host, target_port, task_left, task_completed, time_elapsed())
+						print(good_msg(message))
+					else:
+						message = 'Skipped executing Plugin ID: %s because the validation check already exists for specific host: %s:%s\n%s' % (plugin_id, target_host, target_port, time_elapsed())
+						print(warning_msg(message))
+			mycursor.close()
+			conn.close()
 			# End processing the stuff here
 		queue_lock.release()
-		time.sleep(1)
+		datetime.time.sleep(1)
 
 def error(plugin_id, target_host, target_port, target_protocol):
 	f = open('plugin_check_output.txt', 'a+')
@@ -121,7 +120,7 @@ def error_msg(message):
 	return message
 
 def time_elapsed():
-	end_time = datetime.now()
+	end_time = datetime.datetime.now()
 	time_taken = end_time - start_time
 	message = 'Total Time Elapsed: '+str(time_taken)
 	return message
@@ -135,7 +134,7 @@ nessus_file = args.f
 total_thread = args.t
 total_tasks = 0
 
-start_time = datetime.now()
+start_time = datetime.datetime.now()
 message = "Autorun started on: " + str(start_time)
 print(good_msg(message))
 
