@@ -2,7 +2,7 @@
 import argparse
 import threading
 import queue
-import datetime
+from datetime import datetime, time
 import xml.etree.ElementTree as ET
 import mysql.connector
 import os
@@ -94,7 +94,7 @@ def process_data(thread_name, working_queue):
 			conn.close()
 			# End processing the stuff here
 		queue_lock.release()
-		datetime.time.sleep(1)
+		time.sleep(1)
 
 def error(plugin_id, target_host, target_port, target_protocol):
 	f = open('plugin_check_output.txt', 'a+')
@@ -120,7 +120,7 @@ def error_msg(message):
 	return message
 
 def time_elapsed():
-	end_time = datetime.datetime.now()
+	end_time = datetime.now()
 	time_taken = end_time - start_time
 	message = 'Total Time Elapsed: '+str(time_taken)
 	return message
@@ -134,7 +134,7 @@ nessus_file = args.f
 total_thread = args.t
 total_tasks = 0
 
-start_time = datetime.datetime.now()
+start_time = datetime.now()
 message = "Autorun started on: " + str(start_time)
 print(good_msg(message))
 
