@@ -1,0 +1,72 @@
+Loading internal logger. Log::Log4perl recommended for better logging
+Reading '/root/.cpan/Metadata'
+  Database was generated on Mon, 04 Nov 2019 02:55:31 GMT
+Fetching with LWP:
+http://www.cpan.org/authors/01mailrc.txt.gz
+Reading '/root/.cpan/sources/authors/01mailrc.txt.gz'
+............................................................................DONE
+Fetching with LWP:
+http://www.cpan.org/modules/02packages.details.txt.gz
+Reading '/root/.cpan/sources/modules/02packages.details.txt.gz'
+  Database was generated on Wed, 11 Mar 2020 06:55:49 GMT
+.............
+  New CPAN.pm version (v2.27) available.
+  [Currently running version is v2.22]
+  You might want to try
+    install CPAN
+    reload cpan
+  to both upgrade CPAN.pm and run the new version without leaving
+  the current session.
+
+
+...............................................................DONE
+Fetching with LWP:
+http://www.cpan.org/modules/03modlist.data.gz
+Reading '/root/.cpan/sources/modules/03modlist.data.gz'
+DONE
+Writing /root/.cpan/Metadata
+Encoding::BER is up to date (1.02).
+Starting rdp-sec-check v0.9-beta ( http://labs.portcullis.co.uk/application/rdp-sec-check/ ) at Wed Mar 11 15:09:41 2020
+
+[+] Scanning 1 hosts
+
+Target:    127.0.0.1
+IP:        127.0.0.1
+Port:      3389
+
+[+] Checking supported protocols
+
+WARNING in Socket Creation : Connection refused
+WARNING in Socket Creation : Connection refused
+WARNING in Socket Creation : Connection refused
+
+ERROR: failed to connect 3 time(s)
+[E] Unable to create socket
+
+
+rdp-sec-check v0.9-beta completed at Wed Mar 11 15:09:41 2020
+
+Loading internal logger. Log::Log4perl recommended for better logging
+Reading '/root/.cpan/Metadata'
+  Database was generated on Wed, 11 Mar 2020 06:55:49 GMT
+Encoding::BER is up to date (1.02).
+Starting rdp-sec-check v0.9-beta ( http://labs.portcullis.co.uk/application/rdp-sec-check/ ) at Wed Mar 11 15:10:31 2020
+
+[+] Scanning 1 hosts
+
+Target:    127.0.0.1
+IP:        127.0.0.1
+Port:      3389
+
+[+] Checking supported protocols
+
+WARNING in Socket Creation : Connection refused
+WARNING in Socket Creation : Connection refused
+WARNING in Socket Creation : Connection refused
+
+ERROR: failed to connect 3 time(s)
+[E] Unable to create socket
+
+
+rdp-sec-check v0.9-beta completed at Wed Mar 11 15:10:31 2020
+
