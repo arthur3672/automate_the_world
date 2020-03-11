@@ -81,9 +81,9 @@ def process_data(thread_name, working_queue):
 					if not (os.path.exists(destination_text_file_path)):
 						# Do not change this part, create a file for better debugging when a thread hangs/wont terminate
 						f = open(destination_text_file_path, "w")
-						command = shlex.split(command)
+						shlex_command = shlex.split(command)
 						f.write("[Command] " + command + '\n\n')
-						f.write(subprocess.check_output(command).read())
+						f.write(subprocess.check_output(shlex_command).decode())
 						f.close()
 						message = 'Completed command for Plugin ID: %s; Host: %s; Port: %s; Task Left: %s; Task Completed: %s\n%s' % (plugin_id, target_host, target_port, task_left, task_completed, time_elapsed())
 						print(good_msg(message))
