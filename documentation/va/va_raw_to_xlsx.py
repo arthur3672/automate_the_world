@@ -68,7 +68,6 @@ def main(input_file, mid_file):
 					if ws.cell(row=row, column=1).value == plugin_id:
 						affected_host = str(target_ip)+':'+root[i][j].attrib['port']+' ('+root[i][j].attrib['protocol'].upper()+')'
 						plugin_output = 'For '+affected_host+':\r\n'
-
 						if root[i][j].find('plugin_output') != None:
 							current_plugin_output = root[i][j].find('plugin_output').text
 							while '  ' in current_plugin_output:
@@ -76,7 +75,7 @@ def main(input_file, mid_file):
 							plugin_output += current_plugin_output
 						else:
 							plugin_output += 'No POC available for this plugin'
-						ws.cell(row=row, column=6).value += '\r\n' + str(target_ip)+':'+root[i][j].attrib['port']+' ('+root[i][j].attrib['protocol'].upper()+')'
+						ws.cell(row=row, column=6).value += '\r\n' + affected_host
 						if len(ws.cell(row=row, column=9).value) > 30000:
 							num = 10
 							while True:

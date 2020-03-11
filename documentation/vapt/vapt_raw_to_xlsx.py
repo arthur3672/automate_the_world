@@ -6,7 +6,10 @@ from openpyxl.styles import Font
 import os
 import xml.etree.ElementTree as ET
 import argparse
-import numbers
+import mysql.connector
+import sys
+sys.path.append('../../')
+import settings
 
 def output_to_xlsx(output, output_file):
 	workbook = load_workbook(output_file)
@@ -19,7 +22,7 @@ def preparation(output_file):
 	ws = workbook.active
 	ws.title = 'Items'
 
-	ws.append(['No', 'Name', 'Description', 'CVSS Score', 'Severity', 'Proof of Concept', 'Affected Host', 'Remediation', 'Status'])
+	ws.append(['No', 'Name', 'Description', 'CVSS Score', 'Severity', 'Affected Host', 'Remediation', 'Status', 'Proof of Concept'])
 	bold_font = Font(bold=True)
 	for cell in ws[1:1]:
 		cell.font = bold_font
@@ -57,19 +60,51 @@ def main(input_file, mid_file):
 			risk_factor = root[i][j].find('risk_factor').text
 			if (risk_factor != 'None'):
 				plugin_id = root[i][j].attrib['pluginID']
+				conn = settings.db()
+				mycursor = conn.cursor(prepared=True)
+				sql = 'SELECT * FROM `plugin` INNER JOIN `command` ON `plugin`.`command_id` = `command`.`command_id` WHERE `plugin`.`plugin_id` = %s'
+				mycursor.execute(sql, (plugin_id, ))
+				result = mycursor.fetchall()
 				workbook = load_workbook(filename=mid_file)
 				ws = workbook['Items']
 				row_count = ws.max_row + 1
 				for row in range(2, row_count):
 					if ws.cell(row=row, column=1).value == plugin_id:
-						ws.cell(row=row, column=7).value += '\r\n' + str(target_ip)+':'+root[i][j].attrib['port']+' ('+root[i][j].attrib['protocol'].upper()+')'
+						affected_host = str(target_ip)+':'+root[i][j].attrib['port']+' ('+root[i][j].attrib['protocol'].upper()+')'
+						if mycursor.rowcount > 0:
+							if result[0][1] == 1:
+								plugin_output = 'For '+affected_host+':\r\n'
+								if root[i][j].find('plugin_output') != None:
+									current_plugin_output = root[i][j].find('plugin_output').text
+									while '  ' in current_plugin_output:
+										current_plugin_output = current_plugin_output.replace('  ', ' ')
+									plugin_output += current_plugin_output
+								else:
+									plugin_output += 'No POC available for this plugin'
+								ws.cell(row=row, column=6).value += '\r\n' + affected_host
+								if len(ws.cell(row=row, column=9).value) > 30000:
+									num = 10
+									while True:
+										if isinstance(ws.cell(row=row, column=num).value, str):
+											if len(ws.cell(row=row, column=num).value) < 30000:
+												ws.cell(row=row, column=num).value += plugin_output + '\r\n'
+												break
+											else:
+												num += 1
+										else:
+											ws.cell(row=row, column=num).value = plugin_output + '\r\n'
+											break
+								else:
+									ws.cell(row=row, column=9).value += '\r\n' + plugin_output
 						duplicate = 1
 						workbook.save(filename=mid_file)
 						break
 
-				if duplicate == 0:				
+				if duplicate == 0:
 					name = root[i][j].attrib['pluginName']
 					description = root[i][j].find('description').text
+					while '  ' in description:
+						description = description.replace('  ', ' ')
 
 					if root[i][j].find('cvss3_temporal_score') != None:
 						cvss_score = root[i][j].find('cvss3_temporal_score').text
@@ -99,15 +134,28 @@ def main(input_file, mid_file):
 						severity = 'Critical'
 					
 					affected_host = str(target_ip)+':'+root[i][j].attrib['port']+' ('+root[i][j].attrib['protocol'].upper()+')'
+					plugin_output = ''
+					if mycursor.rowcount > 0:
+						if result[0][1] == 1:
+							plugin_output = 'For '+affected_host+':\r\n'
+							if root[i][j].find('plugin_output') != None:
+								current_plugin_output = root[i][j].find('plugin_output').text
+								while '  ' in current_plugin_output:
+									current_plugin_output = current_plugin_output.replace('  ', ' ')
+								plugin_output += current_plugin_output
+							else:
+								plugin_output += 'No POC available for this plugin'
+						else:
+							plugin_output = 'Please refer to the Proof of Concept folder'
+
 					remediation = root[i][j].find('solution').text
 					status = 'Not Solved'
 
-					output = [plugin_id, name, description, float(cvss_score), severity, '', affected_host, remediation, status]
+					output = [plugin_id, name, description, float(cvss_score), severity, affected_host, remediation, status, plugin_output]
 					output_to_xlsx(output, mid_file)
-	
+
 	output_file = mid_file[4:]
 	sort(mid_file, output_file)
-	print('Completed!')
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
@@ -115,7 +163,12 @@ if __name__ == '__main__':
 	parser.add_argument('-o', metavar='Output file', type=str, help='Output XLSX file', required=True)
 	args = parser.parse_args()
 
-	output_file = args.o
+	if args.o.endswith('.xlsx') is False:
+		parser.print_help()
+		exit()
+	else:
+		output_file = args.o
+
 	mid_file = ''
 	if '/' in output_file:
 		mid_file = output_file.split('/')
