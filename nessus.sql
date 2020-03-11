@@ -1,44 +1,30 @@
--- phpMyAdmin SQL Dump
--- version 4.9.0.1
--- https://www.phpmyadmin.net/
---
--- Host: localhost
--- Generation Time: Nov 20, 2019 at 12:55 PM
--- Server version: 10.3.20-MariaDB-1
--- PHP Version: 7.3.11-1~deb10u1
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `vapt`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `command`
---
+DROP TABLE IF EXISTS `plugin`;
+DROP TABLE IF EXISTS `command`;
 
 CREATE TABLE `command` (
   `command_id` int(11) NOT NULL,
   `parameter` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+);
 
---
--- Dumping data for table `command`
---
+CREATE TABLE `plugin` (
+  `plugin_id` int(11) NOT NULL,
+  `command_id` int(11) NOT NULL
+);
+
+ALTER TABLE `command`
+  ADD PRIMARY KEY (`command_id`);
+
+ALTER TABLE `plugin`
+  ADD PRIMARY KEY (`plugin_id`);
+
+ALTER TABLE `command`
+  MODIFY `command_id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `plugin`
+  ADD FOREIGN KEY (`command_id`) REFERENCES `command` (`command_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 INSERT INTO `command` (`command_id`, `parameter`) VALUES
-(1, 'nmap --script +ssh2-enum-algos -sV IP_ADDRESS -p PORT\n'),
+(1, 'empty'),
 (2, 'timeout 30 openssl s_client -showcerts -connect IP_ADDRESS:PORT'),
 (3, 'nmap --script +ssl-enum-ciphers -sV IP_ADDRESS -p PORT'),
 (4, 'sslyze --certinfo IP_ADDRESS:PORT'),
@@ -83,27 +69,121 @@ INSERT INTO `command` (`command_id`, `parameter`) VALUES
 (43, 'nmap -sV --script +sshv1 IP_ADDRESS -p PORT'),
 (44, 'ntpq -c rv IP_ADDRESS'),
 (45, 'python2 /usr/share/exploitdb/exploits/windows/remote/39858.py -p PORT IP_ADDRESS -c \'whoami\'; python2 /usr/share/exploitdb/exploits/windows/remote/39858.py -p PORT IP_ADDRESS -c \'ipconfig\'\n'),
-(46, '(echo \'\' > RANDOM_PATH; echo \'use auxiliary/scanner/rdp/ms12_020_check\' >> RANDOM_PATH; echo \'set rhosts IP_ADDRESS\' >> RANDOM_PATH; echo \'set rport PORT\' >> RANDOM_PATH; echo \'check\' >> RANDOM_PATH; echo \'exit\' >> RANDOM_PATH; msfconsole -r RANDOM_PATH; rm RANDOM_PATH;)');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `plugin`
---
-
-CREATE TABLE `plugin` (
-  `plugin_id` int(11) NOT NULL,
-  `command_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `plugin`
---
+(46, '(echo \'\' > RANDOM_PATH; echo \'use auxiliary/scanner/rdp/ms12_020_check\' >> RANDOM_PATH; echo \'set rhosts IP_ADDRESS\' >> RANDOM_PATH; echo \'set rport PORT\' >> RANDOM_PATH; echo \'check\' >> RANDOM_PATH; echo \'exit\' >> RANDOM_PATH; msfconsole -r RANDOM_PATH; rm RANDOM_PATH;)'),
+(47, 'nmap --script +ssh2-enum-algos -sV IP_ADDRESS -p PORT\n');
 
 INSERT INTO `plugin` (`plugin_id`, `command_id`) VALUES
-(70658, 1),
-(71049, 1),
-(90317, 1),
+(54301, 1),
+(55759, 1),
+(55859, 1),
+(56070, 1),
+(56213, 1),
+(57082, 1),
+(57541, 1),
+(58333, 1),
+(62985, 1),
+(62988, 1),
+(63155, 1),
+(63200, 1),
+(63478, 1),
+(64784, 1),
+(65057, 1),
+(66427, 1),
+(66428, 1),
+(72691, 1),
+(72692, 1),
+(74246, 1),
+(74247, 1),
+(77162, 1),
+(77475, 1),
+(78447, 1),
+(81264, 1),
+(81650, 1),
+(82820, 1),
+(83471, 1),
+(83526, 1),
+(83764, 1),
+(84738, 1),
+(84801, 1),
+(84824, 1),
+(86149, 1),
+(86403, 1),
+(86542, 1),
+(87252, 1),
+(87253, 1),
+(87313, 1),
+(87918, 1),
+(88045, 1),
+(88936, 1),
+(89831, 1),
+(90625, 1),
+(90828, 1),
+(91097, 1),
+(92035, 1),
+(92516, 1),
+(94072, 1),
+(94138, 1),
+(94578, 1),
+(95438, 1),
+(96003, 1),
+(96453, 1),
+(96628, 1),
+(97794, 1),
+(97888, 1),
+(99289, 1),
+(99367, 1),
+(99374, 1),
+(99588, 1),
+(100681, 1),
+(100767, 1),
+(101843, 1),
+(102428, 1),
+(103329, 1),
+(103698, 1),
+(103782, 1),
+(103963, 1),
+(104627, 1),
+(104892, 1),
+(106190, 1),
+(106975, 1),
+(109202, 1),
+(111163, 1),
+(118228, 1),
+(121116, 1),
+(121117, 1),
+(121118, 1),
+(121119, 1),
+(121120, 1),
+(121231, 1),
+(124064, 1),
+(124198, 1),
+(125884, 1),
+(126821, 1),
+(130011, 1),
+(130275, 1),
+(130463, 1),
+(130909, 1),
+(130912, 1),
+(131022, 1),
+(131190, 1),
+(131930, 1),
+(131936, 1),
+(131954, 1),
+(132097, 1),
+(132101, 1),
+(132717, 1),
+(132863, 1),
+(132868, 1),
+(132992, 1),
+(132999, 1),
+(133053, 1),
+(133208, 1),
+(133465, 1),
+(133615, 1),
+(133619, 1),
+(133845, 1),
+(133848, 1),
+(133954, 1),
 (20007, 3),
 (26928, 3),
 (31705, 3),
@@ -198,47 +278,7 @@ INSERT INTO `plugin` (`plugin_id`, `command_id`) VALUES
 (10882, 43),
 (97861, 44),
 (90796, 45),
-(58435, 46);
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `command`
---
-ALTER TABLE `command`
-  ADD PRIMARY KEY (`command_id`);
-
---
--- Indexes for table `plugin`
---
-ALTER TABLE `plugin`
-  ADD PRIMARY KEY (`plugin_id`),
-  ADD UNIQUE KEY `plugin_id` (`plugin_id`),
-  ADD KEY `tools_id` (`command_id`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `command`
---
-ALTER TABLE `command`
-  MODIFY `command_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `plugin`
---
-ALTER TABLE `plugin`
-  ADD CONSTRAINT `plugin_ibfk_1` FOREIGN KEY (`command_id`) REFERENCES `command` (`command_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+(58435, 46),
+(70658, 47),
+(71049, 47),
+(90317, 47);
