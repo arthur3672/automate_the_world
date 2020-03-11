@@ -2,7 +2,8 @@
 import argparse
 import threading
 import queue
-from datetime import datetime, time
+from datetime import datetime
+import time
 import xml.etree.ElementTree as ET
 import mysql.connector
 import os
