@@ -19,7 +19,7 @@ def preparation(output_file):
 	ws = workbook.active
 	ws.title = 'Items'
 
-	ws.append(['No', 'Name', 'Description', 'CVSS Score', 'Severity', 'Affected Host', 'Remediation', 'Status', 'Proof of Concept'])
+	ws.append(['No', 'Name', 'Description', 'Affected Host', 'Remediation', 'CVSS Score', 'Severity', 'Status', 'Proof of Concept'])
 	bold_font = Font(bold=True)
 	for cell in ws[1:1]:
 		cell.font = bold_font
@@ -34,8 +34,8 @@ def sort(input_file, output_file):
 	while score > 0:
 		cvss_score = score / 10
 		for row in input_ws.rows:
-			if isinstance(row[3].value, numbers.Real):
-				if row[3].value == cvss_score:
+			if isinstance(row[5].value, numbers.Real):
+				if row[5].value == cvss_score:
 					output_workbook = load_workbook(output_file)
 					output_ws = output_workbook.active
 					row_value = [number]
@@ -75,7 +75,7 @@ def main(input_file, mid_file):
 							plugin_output += current_plugin_output
 						else:
 							plugin_output += 'No POC available for this plugin'
-						ws.cell(row=row, column=6).value += '\r\n' + affected_host
+						ws.cell(row=row, column=4).value += '\r\n' + affected_host
 						if len(ws.cell(row=row, column=9).value) > 30000:
 							num = 10
 							while True:
@@ -142,7 +142,7 @@ def main(input_file, mid_file):
 					remediation = root[i][j].find('solution').text
 					status = 'Not Solved'
 
-					output = [plugin_id, name, description, float(cvss_score), severity, affected_host, remediation, status, plugin_output]
+					output = [plugin_id, name, description, affected_host, remediation, float(cvss_score), severity, status, plugin_output]
 					output_to_xlsx(output, mid_file)
 	
 	output_file = mid_file[4:]
@@ -165,6 +165,8 @@ if __name__ == '__main__':
 	preparation(mid_file)
 
 	if os.path.isdir(args.f):
+		if args.f.endswith('/') == False:
+			args.f += '/'
 		for filename in os.listdir(args.f):
 			if filename.endswith('.nessus'):
 				fullpath_file = args.f + filename

@@ -23,7 +23,7 @@ def preparation(output_file):
 	ws = workbook.active
 	ws.title = 'Items'
 
-	ws.append(['No', 'Name', 'Description', 'CVSS Score', 'Severity', 'Affected Host', 'Remediation', 'Status', 'Proof of Concept'])
+	ws.append(['No', 'Name', 'Description', 'Affected Host', 'Remediation', 'CVSS Score', 'Severity', 'Status', 'Proof of Concept'])
 	bold_font = Font(bold=True)
 	for cell in ws[1:1]:
 		cell.font = bold_font
@@ -38,8 +38,8 @@ def sort(input_file, output_file):
 	while score > 0:
 		cvss_score = score / 10
 		for row in input_ws.rows:
-			if isinstance(row[3].value, numbers.Real):
-				if row[3].value == cvss_score:
+			if isinstance(row[5].value, numbers.Real):
+				if row[5].value == cvss_score:
 					output_workbook = load_workbook(output_file)
 					output_ws = output_workbook.active
 					row_value = [number]
@@ -53,12 +53,13 @@ def sort(input_file, output_file):
 
 
 def main(input_file, mid_file):
+	conn = settings.db()
+	mycursor = conn.cursor(prepared=True)
+	plugin_output = ''
 	tree = ET.parse(input_file)
 	root = tree.getroot()[1]
 	total_hosts = len(root)
 	for i in range(0, total_hosts):
-		conn = settings.db()
-		mycursor = conn.cursor(prepared=True)
 		target_ip = root[i].attrib['name']
 		total_findings = len(root[i])
 		for j in range(1, total_findings):
@@ -77,16 +78,17 @@ def main(input_file, mid_file):
 				for row in range(2, row_count):
 					if ws.cell(row=row, column=1).value == plugin_id:
 						affected_host = str(target_ip)+':'+root[i][j].attrib['port']+' ('+root[i][j].attrib['protocol'].upper()+')'
-						if result[0][1] != 1:
-							plugin_output = 'For '+affected_host+':\r\n'
-							if root[i][j].find('plugin_output') != None:
-								current_plugin_output = root[i][j].find('plugin_output').text
-								while '  ' in current_plugin_output:
-									current_plugin_output = current_plugin_output.replace('  ', ' ')
-								plugin_output += current_plugin_output
-							else:
-								plugin_output += 'No POC available for this plugin'
-						ws.cell(row=row, column=6).value += '\r\n' + affected_host
+						if mycursor.rowcount == 0:
+							if result[0][1] != 1:
+								plugin_output = 'For '+affected_host+':\r\n'
+								if root[i][j].find('plugin_output') != None:
+									current_plugin_output = root[i][j].find('plugin_output').text
+									while '  ' in current_plugin_output:
+										current_plugin_output = current_plugin_output.replace('  ', ' ')
+									plugin_output += current_plugin_output
+								else:
+									plugin_output += 'No POC available for this plugin'
+						ws.cell(row=row, column=4).value += '\r\n' + affected_host
 						if len(ws.cell(row=row, column=9).value) > 30000:
 							num = 10
 							while True:
@@ -106,7 +108,7 @@ def main(input_file, mid_file):
 						workbook.save(filename=mid_file)
 						break
 
-				if duplicate == 0:				
+				if duplicate == 0:
 					name = root[i][j].attrib['pluginName']
 					description = root[i][j].find('description').text
 					while '  ' in description:
@@ -140,28 +142,30 @@ def main(input_file, mid_file):
 						severity = 'Critical'
 					
 					affected_host = str(target_ip)+':'+root[i][j].attrib['port']+' ('+root[i][j].attrib['protocol'].upper()+')'
-					if result[0][1] != 1:
-						plugin_output = 'For '+affected_host+':\r\n'
+					if mycursor.rowcount == 0:
+						if result[0][1] != 1:
+							plugin_output = 'For '+affected_host+':\r\n'
 
-						if root[i][j].find('plugin_output') != None:
-							current_plugin_output = root[i][j].find('plugin_output').text
-							while '  ' in current_plugin_output:
-								current_plugin_output = current_plugin_output.replace('  ', ' ')
-							plugin_output += current_plugin_output
-						else:
-							plugin_output += 'No POC available for this plugin'
+							if root[i][j].find('plugin_output') != None:
+								current_plugin_output = root[i][j].find('plugin_output').text
+								while '  ' in current_plugin_output:
+									current_plugin_output = current_plugin_output.replace('  ', ' ')
+								plugin_output += current_plugin_output
+							else:
+								plugin_output += 'No POC available for this plugin'
 					else:
-						plugin_output = 'Please refer to the PoC folder'
+						plugin_output = 'Please refer to PoC folder'
 
 					remediation = root[i][j].find('solution').text
 					status = 'Not Solved'
 
-					output = [plugin_id, name, description, float(cvss_score), severity, affected_host, remediation, status, plugin_output]
+					output = [plugin_id, name, description, affected_host, remediation, float(cvss_score), severity, status, plugin_output]
 					output_to_xlsx(output, mid_file)
-		mycursor.close()
-		conn.close()
+	
 	output_file = mid_file[4:]
 	sort(mid_file, output_file)
+	mycursor.close()
+	conn.close()
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
@@ -180,6 +184,8 @@ if __name__ == '__main__':
 	preparation(mid_file)
 
 	if os.path.isdir(args.f):
+		if args.f.endswith('/') == False:
+			args.f += '/'
 		for filename in os.listdir(args.f):
 			if filename.endswith('.nessus'):
 				fullpath_file = args.f + filename

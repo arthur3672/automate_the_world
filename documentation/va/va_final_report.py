@@ -39,7 +39,7 @@ def main(input_file, output_file):
 
 	document.add_heading('Findings Summary')
 
-	if float(ws.cell(row=current_row, column=4).value) >= 9:
+	if float(ws.cell(row=current_row, column=6).value) >= 9:
 		document.add_heading('Critical Findings', level=2)
 		table = document.add_table(rows=1, cols=3)
 		table.style = 'Table Grid'
@@ -51,16 +51,16 @@ def main(input_file, output_file):
 		table.cell(0, 2).text = 'Affected IP / URL / Host'
 		count = 1
 		for i in range(current_row, row_count):
-			if float(ws.cell(row=i, column=4).value) < 9:
+			if float(ws.cell(row=i, column=6).value) < 9:
 				break
 			else:
 				table.add_row()
 				table.cell(count, 0).text = str(count)
 				table.cell(count, 1).text = ws.cell(row=i, column=2).value
-				if len(ws.cell(row=i, column=6).value.split('\r\n')) == 1:
+				if len(ws.cell(row=i, column=4).value.split('\r\n')) == 1:
 					table.cell(count, 2).text = ws.cell(row=i, column=6).value
 				else:
-					for ip in ws.cell(row=i, column=6).value.split('\r\n'):
+					for ip in ws.cell(row=i, column=4).value.split('\r\n'):
 						table.cell(count, 2).text += ip+'\n'
 					table.cell(count, 2).text = table.cell(count, 2).text[:-1]
 				count += 1
@@ -71,7 +71,7 @@ def main(input_file, output_file):
 				row.cells[idx].width = width
 		document.add_page_break()
 
-	if float(ws.cell(row=current_row, column=4).value) >= 7:
+	if float(ws.cell(row=current_row, column=6).value) >= 7:
 		document.add_heading('High Findings', level=2)
 		table = document.add_table(rows=1, cols=3)
 		table.style = 'Table Grid'
@@ -83,16 +83,16 @@ def main(input_file, output_file):
 		table.cell(0, 2).text = 'Affected IP / URL / Host'
 		count = 1
 		for i in range(current_row, row_count):
-			if float(ws.cell(row=i, column=4).value) < 7:
+			if float(ws.cell(row=i, column=6).value) < 7:
 				break
 			else:
 				table.add_row()
 				table.cell(count, 0).text = str(count)
 				table.cell(count, 1).text = ws.cell(row=i, column=2).value
-				if len(ws.cell(row=i, column=6).value.split('\r\n')) == 1:
+				if len(ws.cell(row=i, column=4).value.split('\r\n')) == 1:
 					table.cell(count, 2).text = ws.cell(row=i, column=6).value
 				else:
-					for ip in ws.cell(row=i, column=6).value.split('\r\n'):
+					for ip in ws.cell(row=i, column=4).value.split('\r\n'):
 						table.cell(count, 2).text += ip+'\n'
 					table.cell(count, 2).text = table.cell(count, 2).text[:-1]
 				count += 1
@@ -103,7 +103,7 @@ def main(input_file, output_file):
 				row.cells[idx].width = width
 		document.add_page_break()
 
-	if float(ws.cell(row=current_row, column=4).value) >= 4:
+	if float(ws.cell(row=current_row, column=6).value) >= 4:
 		document.add_heading('Medium Findings', level=2)
 		table = document.add_table(rows=1, cols=3)
 		table.style = 'Table Grid'
@@ -115,16 +115,16 @@ def main(input_file, output_file):
 		table.cell(0, 2).text = 'Affected IP / URL / Host'
 		count = 1
 		for i in range(current_row, row_count):
-			if float(ws.cell(row=i, column=4).value) < 4:
+			if float(ws.cell(row=i, column=6).value) < 4:
 				break
 			else:
 				table.add_row()
 				table.cell(count, 0).text = str(count)
 				table.cell(count, 1).text = ws.cell(row=i, column=2).value
-				if len(ws.cell(row=i, column=6).value.split('\r\n')) == 1:
+				if len(ws.cell(row=i, column=4).value.split('\r\n')) == 1:
 					table.cell(count, 2).text = ws.cell(row=i, column=6).value
 				else:
-					for ip in ws.cell(row=i, column=6).value.split('\r\n'):
+					for ip in ws.cell(row=i, column=4).value.split('\r\n'):
 						table.cell(count, 2).text += ip+'\n'
 					table.cell(count, 2).text = table.cell(count, 2).text[:-1]
 				count += 1
@@ -135,7 +135,7 @@ def main(input_file, output_file):
 				row.cells[idx].width = width
 		document.add_page_break()
 
-	if float(ws.cell(row=current_row, column=4).value) > 0:
+	if float(ws.cell(row=current_row, column=6).value) > 0:
 		document.add_heading('Low Findings', level=2)
 		table = document.add_table(rows=1, cols=3)
 		table.style = 'Table Grid'
@@ -147,16 +147,16 @@ def main(input_file, output_file):
 		table.cell(0, 2).text = 'Affected IP / URL / Host'
 		count = 1
 		for i in range(current_row, row_count):
-			if float(ws.cell(row=i, column=4).value) == 0:
+			if float(ws.cell(row=i, column=6).value) == 0:
 				break
 			else:
 				table.add_row()
 				table.cell(count, 0).text = str(count)
 				table.cell(count, 1).text = ws.cell(row=i, column=2).value
-				if len(ws.cell(row=i, column=6).value.split('\r\n')) == 1:
+				if len(ws.cell(row=i, column=4).value.split('\r\n')) == 1:
 					table.cell(count, 2).text = ws.cell(row=i, column=6).value
 				else:
-					for ip in ws.cell(row=i, column=6).value.split('\r\n'):
+					for ip in ws.cell(row=i, column=4).value.split('\r\n'):
 						table.cell(count, 2).text += ip+'\n'
 					table.cell(count, 2).text = table.cell(count, 2).text[:-1]
 				count += 1
@@ -182,11 +182,12 @@ def main(input_file, output_file):
 			table.add_row()
 			table.cell(count, 0).text = str(count)
 			table.cell(count, 1).text = ws.cell(row=i, column=2).value
-			if len(ws.cell(row=i, column=6).value.split('\r\n')) == 1:
+			if len(ws.cell(row=i, column=4).value.split('\r\n')) == 1:
 				table.cell(count, 2).text = ws.cell(row=i, column=6).value
 			else:
-				for ip in ws.cell(row=i, column=6).value.split('\r\n'):
+				for ip in ws.cell(row=i, column=4).value.split('\r\n'):
 					table.cell(count, 2).text += ip+'\n'
+				table.cell(count, 2).text = table.cell(count, 2).text[:-1]
 			count += 1
 		widths = (Inches(0.4), Inches(3.7), Inches(2))
 		for row in table.rows:
@@ -199,10 +200,10 @@ def main(input_file, output_file):
 	for i in range(2, row_count):
 		name = ws.cell(row=i, column=2).value
 		description = ws.cell(row=i, column=3).value
-		cvss_score = 'CVSS Score: '+str(ws.cell(row=i, column=4).value)
-		severity = ws.cell(row=i, column=5).value
-		affected_host = ws.cell(row=i, column=6).value
-		remediation = ws.cell(row=i, column=7).value
+		affected_host = ws.cell(row=i, column=4).value
+		remediation = ws.cell(row=i, column=5).value
+		cvss_score = 'CVSS Score: '+str(ws.cell(row=i, column=6).value)
+		severity = ws.cell(row=i, column=7).value
 		status = ws.cell(row=i, column=8).value
 
 		document.add_heading(name, level=2)
@@ -213,6 +214,17 @@ def main(input_file, output_file):
 		document.add_heading('Risk Level', level=3)
 		document.add_paragraph(severity)
 		document.add_paragraph(cvss_score)
+		document.add_paragraph()
+		document.add_heading('Affected IP / URL / Host', level=3)
+		for hosts in affected_host.split('\r\n'):
+			document.add_paragraph(hosts)
+		document.add_paragraph()
+		document.add_heading('Remediation', level=3)
+		for solution in remediation.split('\n\n'):
+			document.add_paragraph(solution)
+		document.add_paragraph()
+		document.add_heading('Status', level=3)
+		document.add_paragraph(status)
 		document.add_paragraph()
 		document.add_heading('Proof of Concept', level=3)
 		num = 9
@@ -225,17 +237,6 @@ def main(input_file, output_file):
 					output = output.replace('\n ', '\n')
 				document.add_paragraph(output)
 			num += 1
-		document.add_paragraph()
-		document.add_heading('Affected IP / URL / Host', level=3)
-		for hosts in affected_host.split('\r\n'):
-			document.add_paragraph(hosts)
-		document.add_paragraph()
-		document.add_heading('Remediation', level=3)
-		for solution in remediation.split('\n\n'):
-			document.add_paragraph(solution)
-		document.add_paragraph()
-		document.add_heading('Status', level=3)
-		document.add_paragraph(status)
 		document.add_page_break()
 		document.save(output_file)
 
@@ -266,6 +267,8 @@ if __name__ == '__main__':
 	va_raw_to_xlsx.preparation(mid_xlsx_file)
 
 	if os.path.isdir(args.n):
+		if args.n.endswith('/') == False:
+			args.n += '/'
 		for filename in os.listdir(args.n):
 			if filename.endswith('.nessus'):
 				fullpath_file = args.n + filename
@@ -284,6 +287,8 @@ if __name__ == '__main__':
 	va_nmap.get_ready(output_file)
 
 	if os.path.isdir(args.x):
+		if args.x.endswith('/') == False:
+			args.x += '/'
 		for filename in os.listdir(args.x):
 			if filename.endswith('.xml'):
 				fullpath_file = args.x + filename
