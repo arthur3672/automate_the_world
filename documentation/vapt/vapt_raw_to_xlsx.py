@@ -6,6 +6,7 @@ from openpyxl.styles import Font
 import os
 import xml.etree.ElementTree as ET
 import argparse
+import numbers
 import mysql.connector
 import sys
 sys.path.append('../../')
@@ -37,13 +38,17 @@ def sort(input_file, output_file):
 	while score > 0:
 		cvss_score = score / 10
 		for row in input_ws.rows:
-			if row[3].value == cvss_score:
-				output_workbook = load_workbook(output_file)
-				output_ws = output_workbook.active
-				row_value = [number, row[1].value, row[2].value, row[3].value, row[4].value, row[5].value, row[6].value, row[7].value, row[8].value]
-				output_ws.append(row_value)
-				number += 1
-				output_workbook.save(filename=output_file)
+			if isinstance(row[3].value, numbers.Real):
+				if row[3].value == cvss_score:
+					output_workbook = load_workbook(output_file)
+					output_ws = output_workbook.active
+					row_value = [number]
+					column_count = input_ws.max_column
+					for col in range(1, column_count):
+						row_value.append(row[col].value)
+					output_ws.append(row_value)
+					number += 1
+					output_workbook.save(filename=output_file)
 		score -= 1
 
 
@@ -52,6 +57,8 @@ def main(input_file, mid_file):
 	root = tree.getroot()[1]
 	total_hosts = len(root)
 	for i in range(0, total_hosts):
+		conn = settings.db()
+		mycursor = conn.cursor(prepared=True)
 		target_ip = root[i].attrib['name']
 		total_findings = len(root[i])
 		for j in range(1, total_findings):
@@ -59,9 +66,8 @@ def main(input_file, mid_file):
 			output = list()
 			risk_factor = root[i][j].find('risk_factor').text
 			if (risk_factor != 'None'):
+				plugin_output = ''
 				plugin_id = root[i][j].attrib['pluginID']
-				conn = settings.db()
-				mycursor = conn.cursor(prepared=True)
 				sql = 'SELECT * FROM `plugin` INNER JOIN `command` ON `plugin`.`command_id` = `command`.`command_id` WHERE `plugin`.`plugin_id` = %s'
 				mycursor.execute(sql, (plugin_id, ))
 				result = mycursor.fetchall()
@@ -71,36 +77,36 @@ def main(input_file, mid_file):
 				for row in range(2, row_count):
 					if ws.cell(row=row, column=1).value == plugin_id:
 						affected_host = str(target_ip)+':'+root[i][j].attrib['port']+' ('+root[i][j].attrib['protocol'].upper()+')'
-						if mycursor.rowcount > 0:
-							if result[0][1] == 1:
-								plugin_output = 'For '+affected_host+':\r\n'
-								if root[i][j].find('plugin_output') != None:
-									current_plugin_output = root[i][j].find('plugin_output').text
-									while '  ' in current_plugin_output:
-										current_plugin_output = current_plugin_output.replace('  ', ' ')
-									plugin_output += current_plugin_output
+						if result[0][1] != 1:
+							plugin_output = 'For '+affected_host+':\r\n'
+							if root[i][j].find('plugin_output') != None:
+								current_plugin_output = root[i][j].find('plugin_output').text
+								while '  ' in current_plugin_output:
+									current_plugin_output = current_plugin_output.replace('  ', ' ')
+								plugin_output += current_plugin_output
+							else:
+								plugin_output += 'No POC available for this plugin'
+						ws.cell(row=row, column=6).value += '\r\n' + affected_host
+						if len(ws.cell(row=row, column=9).value) > 30000:
+							num = 10
+							while True:
+								if isinstance(ws.cell(row=row, column=num).value, str):
+									if len(ws.cell(row=row, column=num).value) < 30000:
+										ws.cell(row=row, column=num).value += plugin_output + '\r\n'
+										break
+									else:
+										num += 1
 								else:
-									plugin_output += 'No POC available for this plugin'
-								ws.cell(row=row, column=6).value += '\r\n' + affected_host
-								if len(ws.cell(row=row, column=9).value) > 30000:
-									num = 10
-									while True:
-										if isinstance(ws.cell(row=row, column=num).value, str):
-											if len(ws.cell(row=row, column=num).value) < 30000:
-												ws.cell(row=row, column=num).value += plugin_output + '\r\n'
-												break
-											else:
-												num += 1
-										else:
-											ws.cell(row=row, column=num).value = plugin_output + '\r\n'
-											break
-								else:
-									ws.cell(row=row, column=9).value += '\r\n' + plugin_output
+									ws.cell(row=row, column=num).value = plugin_output + '\r\n'
+									break
+						else:
+							ws.cell(row=row, column=9).value += '\r\n' + plugin_output
+						
 						duplicate = 1
 						workbook.save(filename=mid_file)
 						break
 
-				if duplicate == 0:
+				if duplicate == 0:				
 					name = root[i][j].attrib['pluginName']
 					description = root[i][j].find('description').text
 					while '  ' in description:
@@ -134,26 +140,26 @@ def main(input_file, mid_file):
 						severity = 'Critical'
 					
 					affected_host = str(target_ip)+':'+root[i][j].attrib['port']+' ('+root[i][j].attrib['protocol'].upper()+')'
-					plugin_output = ''
-					if mycursor.rowcount > 0:
-						if result[0][1] == 1:
-							plugin_output = 'For '+affected_host+':\r\n'
-							if root[i][j].find('plugin_output') != None:
-								current_plugin_output = root[i][j].find('plugin_output').text
-								while '  ' in current_plugin_output:
-									current_plugin_output = current_plugin_output.replace('  ', ' ')
-								plugin_output += current_plugin_output
-							else:
-								plugin_output += 'No POC available for this plugin'
+					if result[0][1] != 1:
+						plugin_output = 'For '+affected_host+':\r\n'
+
+						if root[i][j].find('plugin_output') != None:
+							current_plugin_output = root[i][j].find('plugin_output').text
+							while '  ' in current_plugin_output:
+								current_plugin_output = current_plugin_output.replace('  ', ' ')
+							plugin_output += current_plugin_output
 						else:
-							plugin_output = 'Please refer to the Proof of Concept folder'
+							plugin_output += 'No POC available for this plugin'
+					else:
+						plugin_output = 'Please refer to the PoC folder'
 
 					remediation = root[i][j].find('solution').text
 					status = 'Not Solved'
 
 					output = [plugin_id, name, description, float(cvss_score), severity, affected_host, remediation, status, plugin_output]
 					output_to_xlsx(output, mid_file)
-
+		mycursor.close()
+		conn.close()
 	output_file = mid_file[4:]
 	sort(mid_file, output_file)
 
@@ -163,12 +169,7 @@ if __name__ == '__main__':
 	parser.add_argument('-o', metavar='Output file', type=str, help='Output XLSX file', required=True)
 	args = parser.parse_args()
 
-	if args.o.endswith('.xlsx') is False:
-		parser.print_help()
-		exit()
-	else:
-		output_file = args.o
-
+	output_file = args.o
 	mid_file = ''
 	if '/' in output_file:
 		mid_file = output_file.split('/')
@@ -183,10 +184,12 @@ if __name__ == '__main__':
 			if filename.endswith('.nessus'):
 				fullpath_file = args.f + filename
 				main(fullpath_file, mid_file)
+
 	else:
 		if args.f.endswith('.nessus'):
 			main(args.f, mid_file)
 		else:
 			parser.print_usage()
-	
+
 	os.remove(mid_file)
+	print('Completed!')
