@@ -78,8 +78,8 @@ def main(input_file, mid_file):
 				for row in range(2, row_count):
 					if ws.cell(row=row, column=1).value == plugin_id:
 						affected_host = str(target_ip)+':'+root[i][j].attrib['port']+' ('+root[i][j].attrib['protocol'].upper()+')'
-						if mycursor.rowcount == 0:
-							if result[0][1] != 1:
+						if mycursor.rowcount > 0:
+							if result[0][1] == 1:
 								plugin_output = 'For '+affected_host+':\r\n'
 								if root[i][j].find('plugin_output') != None:
 									current_plugin_output = root[i][j].find('plugin_output').text
@@ -142,8 +142,8 @@ def main(input_file, mid_file):
 						severity = 'Critical'
 					
 					affected_host = str(target_ip)+':'+root[i][j].attrib['port']+' ('+root[i][j].attrib['protocol'].upper()+')'
-					if mycursor.rowcount == 0:
-						if result[0][1] != 1:
+					if mycursor.rowcount > 0:
+						if result[0][1] == 1:
 							plugin_output = 'For '+affected_host+':\r\n'
 
 							if root[i][j].find('plugin_output') != None:
@@ -153,9 +153,8 @@ def main(input_file, mid_file):
 								plugin_output += current_plugin_output
 							else:
 								plugin_output += 'No POC available for this plugin'
-					else:
-						plugin_output = 'Please refer to PoC folder'
-
+						else:
+							plugin_output = 'Please refer to PoC folder'
 					remediation = root[i][j].find('solution').text
 					status = 'Not Solved'
 
