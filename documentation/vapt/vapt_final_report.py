@@ -71,7 +71,7 @@ def main(input_file, output_file):
 				row.cells[idx].width = width
 		document.add_page_break()
 
-	if float(ws.cell(row=current_row, column=6).value) >= 7:
+	if float(ws.cell(row=current_row, column=6).value) >= 7 and float(ws.cell(row=current_row, column=6).value) < 9:
 		document.add_heading('High Findings', level=2)
 		table = document.add_table(rows=1, cols=3)
 		table.style = 'Table Grid'
@@ -103,7 +103,7 @@ def main(input_file, output_file):
 				row.cells[idx].width = width
 		document.add_page_break()
 
-	if float(ws.cell(row=current_row, column=6).value) >= 4:
+	if float(ws.cell(row=current_row, column=6).value) >= 4 and float(ws.cell(row=current_row, column=6).value) < 7:
 		document.add_heading('Medium Findings', level=2)
 		table = document.add_table(rows=1, cols=3)
 		table.style = 'Table Grid'
@@ -135,7 +135,7 @@ def main(input_file, output_file):
 				row.cells[idx].width = width
 		document.add_page_break()
 
-	if float(ws.cell(row=current_row, column=6).value) > 0:
+	if float(ws.cell(row=current_row, column=6).value) > 0 and float(ws.cell(row=current_row, column=6).value) < 4:
 		document.add_heading('Low Findings', level=2)
 		table = document.add_table(rows=1, cols=3)
 		table.style = 'Table Grid'
