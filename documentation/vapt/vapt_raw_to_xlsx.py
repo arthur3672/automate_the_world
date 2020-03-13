@@ -102,7 +102,8 @@ def main(input_file, mid_file):
 									ws.cell(row=row, column=num).value = plugin_output + '\r\n'
 									break
 						else:
-							ws.cell(row=row, column=9).value += '\r\n' + plugin_output
+							if 'Please refer to PoC folder' not in ws.cell(row=row, column=9).value:
+								ws.cell(row=row, column=9).value += '\r\n' + plugin_output
 						
 						duplicate = 1
 						workbook.save(filename=mid_file)
