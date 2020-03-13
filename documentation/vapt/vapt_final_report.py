@@ -58,7 +58,7 @@ def main(input_file, output_file):
 				table.cell(count, 0).text = str(count)
 				table.cell(count, 1).text = ws.cell(row=i, column=2).value
 				if len(ws.cell(row=i, column=4).value.split('\r\n')) == 1:
-					table.cell(count, 2).text = ws.cell(row=i, column=6).value
+					table.cell(count, 2).text = ws.cell(row=i, column=4).value
 				else:
 					for ip in ws.cell(row=i, column=4).value.split('\r\n'):
 						table.cell(count, 2).text += ip+'\n'
@@ -90,7 +90,7 @@ def main(input_file, output_file):
 				table.cell(count, 0).text = str(count)
 				table.cell(count, 1).text = ws.cell(row=i, column=2).value
 				if len(ws.cell(row=i, column=4).value.split('\r\n')) == 1:
-					table.cell(count, 2).text = ws.cell(row=i, column=6).value
+					table.cell(count, 2).text = ws.cell(row=i, column=4).value
 				else:
 					for ip in ws.cell(row=i, column=4).value.split('\r\n'):
 						table.cell(count, 2).text += ip+'\n'
@@ -122,7 +122,7 @@ def main(input_file, output_file):
 				table.cell(count, 0).text = str(count)
 				table.cell(count, 1).text = ws.cell(row=i, column=2).value
 				if len(ws.cell(row=i, column=4).value.split('\r\n')) == 1:
-					table.cell(count, 2).text = ws.cell(row=i, column=6).value
+					table.cell(count, 2).text = ws.cell(row=i, column=4).value
 				else:
 					for ip in ws.cell(row=i, column=4).value.split('\r\n'):
 						table.cell(count, 2).text += ip+'\n'
@@ -154,7 +154,7 @@ def main(input_file, output_file):
 				table.cell(count, 0).text = str(count)
 				table.cell(count, 1).text = ws.cell(row=i, column=2).value
 				if len(ws.cell(row=i, column=4).value.split('\r\n')) == 1:
-					table.cell(count, 2).text = ws.cell(row=i, column=6).value
+					table.cell(count, 2).text = ws.cell(row=i, column=4).value
 				else:
 					for ip in ws.cell(row=i, column=4).value.split('\r\n'):
 						table.cell(count, 2).text += ip+'\n'
@@ -183,7 +183,7 @@ def main(input_file, output_file):
 			table.cell(count, 0).text = str(count)
 			table.cell(count, 1).text = ws.cell(row=i, column=2).value
 			if len(ws.cell(row=i, column=4).value.split('\r\n')) == 1:
-				table.cell(count, 2).text = ws.cell(row=i, column=6).value
+				table.cell(count, 2).text = ws.cell(row=i, column=4).value
 			else:
 				for ip in ws.cell(row=i, column=4).value.split('\r\n'):
 					table.cell(count, 2).text += ip+'\n'
