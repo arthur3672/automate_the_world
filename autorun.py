@@ -57,7 +57,10 @@ def process_data(thread_name, working_queue):
 						f.close()
 			else:
 				if result[0][1] != 1:
-					command = result[0][3] + ' 2>&1'
+					if isinstance(result[0][3], str):
+						command = result[0][3] + ' 2>&1'
+					else:
+						command = result[0][3].decode('utf-8') + ' 2>&1'
 					destination_text_file_path = parent_directory + str(plugin_id)+'_' + str(target_host)+'_'+str(target_port) + '.txt'
 
 					if '\r' in command:

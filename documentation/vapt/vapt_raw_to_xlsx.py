@@ -156,6 +156,8 @@ def main(input_file, mid_file):
 								plugin_output += 'No POC available for this plugin'
 						else:
 							plugin_output = 'Please refer to PoC folder'
+					else:
+						print('This plugin is not in database, please tell the developer to add this plugin in (%s)' % (plugin_id))
 					remediation = root[i][j].find('solution').text
 					status = 'Not Solved'
 
