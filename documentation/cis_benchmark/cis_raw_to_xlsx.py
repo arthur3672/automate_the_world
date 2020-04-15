@@ -10,7 +10,7 @@ import argparse
 def output_to_xlsx(target_os, output, output_file):
 	workbook = load_workbook(output_file)
 	ws = workbook[target_os]
-	current_row_count = ws.max_row
+	current_row_count = ws.max_row 
 	output.insert(0, current_row_count)
 	ws.append(output)
 	workbook.save(filename=output_file)
@@ -76,26 +76,24 @@ def main(input_file, output_file):
 									break
 							if duplicate == 0:
 								if 'compliance-check-name' in element_name:
-									name = root[i][j].find('{http://www.nessus.org/cm}compliance-check-name').text
-									name = name.split(' ')[1:]
+									name = root[i][j].find('{http://www.nessus.org/cm}compliance-check-name').text.strip().split(' ')[1:]
 									name = ' '.join(name)
 								else:
 									name = 'Findings Name not available'
 
 								if 'compliance-info' in element_name:
-									description = root[i][j].find('{http://www.nessus.org/cm}compliance-info').text
-									description = description[1:-1]
+									description = root[i][j].find('{http://www.nessus.org/cm}compliance-info').text.strip()
 								else:
 									description = 'Description not available'
 
 								current_value = 'For ' + str(target_ip) + ':\r\n'
 								if 'compliance-actual-value' in element_name:
-									current_value += root[i][j].find('{http://www.nessus.org/cm}compliance-actual-value').text
+									current_value += root[i][j].find('{http://www.nessus.org/cm}compliance-actual-value').text.strip()
 								else:
 									current_value += 'No Value for this IP'
 
 								if 'compliance-solution' in element_name:
-									solution = root[i][j].find('{http://www.nessus.org/cm}compliance-solution').text
+									solution = root[i][j].find('{http://www.nessus.org/cm}compliance-solution').text.strip()
 								else:
 									solution = 'Solution not available'
 
